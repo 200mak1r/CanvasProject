@@ -10,6 +10,13 @@
             padding: 0;
             margin: 0;
         }
+        body {
+            background: url(./摄图网_500678419_科技背景（非企业商用）.jpg) no-repeat;
+            height:100%;
+            width:100%;
+            overflow: hidden;
+            background-size:cover;
+        }
         #canvas {
             display: block;
             position: absolute;
@@ -17,18 +24,20 @@
             left: 50%;
             top: 50%;
             transform: translate(-50% , -50%);
-            border: 1px solid black;
-        }
+            /* border: 1px solid black; */
+        } 
+
     </style>
 </head>
 <body>
-    <canvas id="canvas" width="1800px" height="600px"></canvas>
+    <canvas id="canvas" width="1500px" height="600px"></canvas>
     <script>
         let canvas = document.querySelector('#canvas')
         let c = canvas.getContext('2d')
 
         // 数据
         let time = 0
+        let year = 2018
         const zzGDP = [10700 , 11600 , 11900 , 12700 , 12900]
         const lyGDP = [4613 , 5000 , 5081 , 5447 , 5800]
         const nyGDP = [3500 , 3795 , 3888 , 4342 , 4554]
@@ -57,8 +66,8 @@
             c.textAlign = 'left'
             c.textBaseline = 'middle'
             let x = 1.0
-            c.fillStyle = 'black'
-            c.fillText(parseInt(this.currentGDP) , this.x+this.width , this.y+this.height/2)
+            c.fillStyle = 'white'
+            c.fillText(' '+parseInt(this.currentGDP)+ '亿元' , this.x+this.width , this.y+this.height/2)
         }
 
         City.prototype.increase = function() {
@@ -66,7 +75,7 @@
             this.currentGDP = this.currentGDP + this.speeds2[parseInt(time / 200)]
         }
 
-        let zzc = new City('郑州' , 100 , 65 , getWidth(zzGDP[0]) , 'red' , zzGDP , getSpeeds1(zzGDP) , getSpeeds2(zzGDP))
+        let zzc = new City('郑州' , 100 , 65 , getWidth(zzGDP[0]) , 'rgba(78, 156, 207, 0.9)' , zzGDP , getSpeeds1(zzGDP) , getSpeeds2(zzGDP))
         let lyc = new City('洛阳' , 100 , 135 , getWidth(lyGDP[0]) , 'green' , lyGDP , getSpeeds1(lyGDP) , getSpeeds2(lyGDP))
         let nyc = new City('南阳' , 100 , 205 , getWidth(nyGDP[0]) , 'gray' , nyGDP , getSpeeds1(nyGDP) , getSpeeds2(nyGDP))
         let xcc = new City('许昌' , 100 , 275 , getWidth(xcGDP[0]) , 'pink' , xcGDP , getSpeeds1(xcGDP) , getSpeeds2(xcGDP))
@@ -77,7 +86,7 @@
 
         // 计算宽度
         function getWidth(data) {
-            return (data/8.0625) 
+            return data/(12900/1200)
         }
 
         // 计算速度1
@@ -129,7 +138,7 @@
         c.font = '28px 微软雅黑'
         c.textAlign = 'end'
         c.textBaseline = 'middle'
-        c.fillStyle = 'black'
+        c.fillStyle = 'white'
         for(let i = 0 ; i < 7 ; i++){
             c.fillText(cites[i].name+' ' , 100 , 90+i*70)
         }     
@@ -145,9 +154,13 @@
                 city.show()
             }
             time++
-            console.log(time);
+            c.font = '140px 微软雅黑'
+            c.fillStyle = 'rgba(255 , 255 , 255 , 0.5)'
+            c.fillText(year + parseInt(time/200) + '年', 950 , 460)
         } , 10)
-
+        
+        
+        
         
         
 
