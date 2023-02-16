@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CityGDP</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+        }
+        #canvas {
+            display: block;
+            position: absolute;
+            margin: 0 auto;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50% , -50%);
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas" width="1800px" height="600px"></canvas>
+    <script>
+        let canvas = document.querySelector('#canvas')
+        let c = canvas.getContext('2d')
+
+        // 数据
+        let time = 0
+        const zzGDP = [10700 , 11600 , 11900 , 12700 , 12900]
+        const lyGDP = [4613 , 5000 , 5081 , 5447 , 5800]
+        const nyGDP = [3500 , 3795 , 3888 , 4342 , 4554]
+        const xcGDP = [3140 , 3373 , 3389 , 3655 , 3745]
+        const zkGDP = [2939	, 3166 , 3221 , 3496 , 3617]
+        const xyGDP = [2534 , 2721 , 2805 , 3065 , 3196]
+        const kfGDP = [2157 , 2299 , 2347 , 2557 , 2657]
+
+        // City
+        function City(name , x , y , width , color , GDP , speeds1 , speeds2) {
+            this.name = name
+            this.x = x
+            this.y = y
+            this.width = width
+            this.height = 50
+            this.color = color
+            this.GDP = GDP
+            this.speeds1 = speeds1
+            this.currentGDP = this.GDP[0]
+            this.speeds2 = speeds2
+        }
+
+        City.prototype.show = function() {
+            drawRect(this.x , this.y , this.width , this.height , this.color)
+            c.font = '28px 微软雅黑'
+            c.textAlign = 'left'
+            c.textBaseline = 'middle'
+            let x = 1.0
+            c.fillStyle = 'black'
+            c.fillText(parseInt(this.currentGDP) , this.x+this.width , this.y+this.height/2)
+        }
+
+        City.prototype.increase = function() {
+            this.width = this.width + this.speeds1[parseInt(time / 200)]
+            this.currentGDP = this.currentGDP + this.speeds2[parseInt(time / 200)]
+        }
+
+        let zzc = new City('郑州' , 100 , 65 , getWidth(zzGDP[0]) , 'red' , zzGDP , getSpeeds1(zzGDP) , getSpeeds2(zzGDP))
+        let lyc = new City('洛阳' , 100 , 135 , getWidth(lyGDP[0]) , 'green' , lyGDP , getSpeeds1(lyGDP) , getSpeeds2(lyGDP))
+        let nyc = new City('南阳' , 100 , 205 , getWidth(nyGDP[0]) , 'gray' , nyGDP , getSpeeds1(nyGDP) , getSpeeds2(nyGDP))
+        let xcc = new City('许昌' , 100 , 275 , getWidth(xcGDP[0]) , 'pink' , xcGDP , getSpeeds1(xcGDP) , getSpeeds2(xcGDP))
+        let zkc = new City('周口' , 100 , 345 , getWidth(zkGDP[0]) , 'orange' , zkGDP , getSpeeds1(zkGDP) , getSpeeds2(zkGDP))
+        let xyc = new City('信阳' , 100 , 415 , getWidth(xyGDP[0]) , 'blue' , xyGDP , getSpeeds1(xyGDP) , getSpeeds2(xyGDP))
+        let kfc = new City('开封' , 100 , 485 , getWidth(kfGDP[0]) , 'purple' , kfGDP , getSpeeds1(kfGDP) , getSpeeds2(kfGDP))
+        let cites = [zzc , lyc , nyc , xcc , zkc , xyc , kfc]
+
+        // 计算宽度
+        function getWidth(data) {
+            return (data/8.0625) 
+        }
+
+        // 计算速度1
+        function getSpeeds1(GDP) {
+            let speeds1 = []
+            for(let i = 1 ; i < 5 ; i++) {
+                speeds1.push(getWidth(GDP[i] - GDP[i-1]) / 200)
+            }
+            return speeds1
+        }
+
+        // 计算速度2
+        function getSpeeds2(GDP) {
+            let speeds2 = []
+            for(let i = 1 ; i < 5 ; i++) {
+                speeds2.push((GDP[i] - GDP[i-1]) / 200)
+            }
+            return speeds2
+        }
+
+        // 直线
+        function drawLine(x1 , y1 , x2 , y2 , color , lineWidth) {
+            c.beginPath()
+            c.moveTo(x1 , y1)
+            c.lineTo(x2 , y2)
+            c.strokeStyle = color
+            c.lineWidth = lineWidth
+            c.stroke()
+            c.closePath()
+        }
+
+        // 矩形
+        function drawRect(x , y , width , height , color) {
+            c.fillStyle = color
+            c.fillRect(x , y , width , height)
+        }
+    </script>
+
+    <script>
+        // XY轴
+        drawLine(100 , 50 , 100 , 550)
+        
+        // 初始柱状数据展示
+        for (const city of cites) {
+            city.show()
+        }
+
+        // 城市名称
+        c.font = '28px 微软雅黑'
+        c.textAlign = 'end'
+        c.textBaseline = 'middle'
+        c.fillStyle = 'black'
+        for(let i = 0 ; i < 7 ; i++){
+            c.fillText(cites[i].name+' ' , 100 , 90+i*70)
+        }     
+        
+        // 定时器动画
+        let timer = setInterval(function() {
+            if(time >= 800){
+                return
+            }
+            c.clearRect(100 , 50 , 1700 , 500)
+            for (const city of cites) {
+                city.increase()
+                city.show()
+            }
+            time++
+            console.log(time);
+        } , 10)
+
+        
+        
+
+    </script>
+
+</body>
+</html>
